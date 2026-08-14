@@ -1,0 +1,92 @@
+diff --git a/src/app/page.tsx b/src/app/page.tsx
+index afe58b0..d7cf0f5 100644
+--- a/src/app/page.tsx
++++ b/src/app/page.tsx
+@@ -1,9 +1,11 @@
+ import Hero from "@/components/Hero";
++import Manifesto from "@/components/Manifesto";
+ 
+ export default function Home() {
+   return (
+     <main>
+       <Hero />
++      <Manifesto />
+     </main>
+   );
+-}
++}
+\ No newline at end of file
+diff --git a/src/components/Manifesto.tsx b/src/components/Manifesto.tsx
+new file mode 100644
+index 0000000..a7060a2
+--- /dev/null
++++ b/src/components/Manifesto.tsx
+@@ -0,0 +1,54 @@
++"use client";
++
++import { useEffect, useRef } from "react";
++import gsap from "gsap";
++import { ScrollTrigger } from "gsap/ScrollTrigger";
++import { site } from "@/data/site";
++import Marquee from "./Marquee";
++
++gsap.registerPlugin(ScrollTrigger);
++
++export default function Manifesto() {
++  const root = useRef<HTMLElement>(null);
++
++  useEffect(() => {
++    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
++    const ctx = gsap.context(() => {
++      gsap.fromTo(
++        "[data-streak]",
++        { xPercent: -120 },
++        {
++          xPercent: 0,
++          ease: "none",
++          scrollTrigger: {
++            trigger: root.current,
++            scrub: true,
++            start: "top bottom",
++            end: "bottom top",
++          },
++        }
++      );
++    }, root);
++    return () => ctx.revert();
++  }, []);
++
++  return (
++    <section
++      ref={root}
++      className="relative flex h-screen items-center overflow-hidden px-6 md:px-12"
++    >
++      <div
++        data-streak
++        className="text-aurora font-display text-[clamp(2.5rem,9vw,7rem)] font-bold uppercase leading-none"
++        aria-label={site.manifesto}
++      >
++        {site.manifesto}
++      </div>
++
++      <Marquee
++        items={["building", "for", "the", "Namibian", "market"]}
++        className="absolute bottom-8 left-0 right-0 border-t border-white/10 py-4"
++      />
++    </section>
++  );
++}
+\ No newline at end of file
+diff --git a/src/components/Marquee.tsx b/src/components/Marquee.tsx
+index 1bbaf3e..0b658db 100644
+--- a/src/components/Marquee.tsx
++++ b/src/components/Marquee.tsx
+@@ -11,7 +11,7 @@ export default function Marquee({
+       className={`overflow-hidden whitespace-nowrap ${className}`}
+       aria-hidden="true"
+     >
+-      <div className="flex w-max animate-marquee">
++      <div className="flex w-max animate-marquee motion-reduce:animate-none">
+         {[0, 1].map((i) => (
+           <span key={i} className="pr-8 font-mono text-sm uppercase tracking-[0.3em] text-dim">
+             {row}

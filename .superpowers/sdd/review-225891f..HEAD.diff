@@ -1,0 +1,106 @@
+diff --git a/src/app/page.tsx b/src/app/page.tsx
+index 7840a42..4f55c73 100644
+--- a/src/app/page.tsx
++++ b/src/app/page.tsx
+@@ -2,6 +2,7 @@ import Hero from "@/components/Hero";
+ import Manifesto from "@/components/Manifesto";
+ import Work from "@/components/Work";
+ import About from "@/components/About";
++import Skills from "@/components/Skills";
+ 
+ export default function Home() {
+   return (
+@@ -10,6 +11,7 @@ export default function Home() {
+       <Manifesto />
+       <Work />
+       <About />
++      <Skills />
+     </main>
+   );
+ }
+\ No newline at end of file
+diff --git a/src/components/Skills.tsx b/src/components/Skills.tsx
+new file mode 100644
+index 0000000..d4b4ae9
+--- /dev/null
++++ b/src/components/Skills.tsx
+@@ -0,0 +1,78 @@
++"use client";
++
++import { useEffect, useRef } from "react";
++
++const skills = [
++  {
++    group: "Mobile",
++    items: ["Android", "Kotlin", "Java", "Mobile UI"],
++  },
++  {
++    group: "Web",
++    items: ["Next.js", "TypeScript", "Tailwind", "GSAP", "React"],
++  },
++  {
++    group: "Data & Backend",
++    items: ["Python", "Node", "PostgreSQL", "APIs", "ML basics"],
++  },
++  {
++    group: "Languages",
++    items: ["JavaScript", "TypeScript", "Python", "Java", "PHP", "Ballerina"],
++  },
++];
++
++export default function Skills() {
++  const root = useRef<HTMLElement>(null);
++
++  useEffect(() => {
++    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
++    const observer = new IntersectionObserver(
++      (entries) => {
++        entries.forEach((e) => {
++          if (e.isIntersecting) {
++            e.target.classList.add("is-in");
++            observer.unobserve(e.target);
++          }
++        });
++      },
++      { threshold: 0.15 }
++    );
++    root.current?.querySelectorAll("[data-reveal]").forEach((el) => observer.observe(el));
++    return () => observer.disconnect();
++  }, []);
++
++  return (
++    <section id="skills" ref={root} className="px-6 py-28 md:px-12">
++      <p className="mb-6 font-mono text-xs uppercase tracking-[0.35em] text-dim">
++        Toolkit
++      </p>
++      <h2 className="font-display text-5xl font-bold text-fog md:text-6xl">
++        Skills & <span className="text-aurora">tools</span>
++      </h2>
++
++      <div className="mt-14 grid gap-8 md:grid-cols-2">
++        {skills.map((group) => (
++          <div
++            key={group.group}
++            data-reveal
++            className="rounded-3xl border border-white/10 bg-ink-card p-7"
++          >
++            <h3 className="mb-4 font-mono text-sm uppercase tracking-[0.25em] text-dim">
++              {group.group}
++            </h3>
++            <ul className="flex flex-wrap gap-2">
++              {group.items.map((item) => (
++                <li
++                  key={item}
++                  className="rounded-full border border-white/15 px-4 py-1.5 font-mono text-sm text-fog"
++                >
++                  {item}
++                </li>
++              ))}
++            </ul>
++          </div>
++        ))}
++      </div>
++    </section>
++  );
++}
+\ No newline at end of file
